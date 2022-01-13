@@ -29,12 +29,15 @@ class ExozodiModel():
         """
         Parameters
         ----------
-        Scenario: 'baseline', 'pessimistic', 'optimistic'
+        Scenario: 'baseline', 'pessimistic', 'optimistic', 'mc'
             Scenario for exozodi level.
         """
         
+        # Print.
+        print('--> Initializing Ertel2020 exozodi distribution')
+        
         # Model parameters.
-        if (Scenario == 'baseline'):
+        if ((Scenario == 'baseline') or (Scenario == 'mc')):
             self.ExozodiData = np.load('ExozodiModels/ExozodiNominal.npy')
         elif (Scenario == 'pessimistic'):
             self.ExozodiData = np.load('ExozodiModels/ExozodiPessimistic.npy')
@@ -44,7 +47,7 @@ class ExozodiModel():
             print('--> WARNING: '+str(Scenario)+' is an unknown scenario')
             Scenario = 'baseline'
             self.ExozodiData = np.load('ExozodiModels/ExozodiNominal.npy')
-        print('--> Using scenario '+str(Scenario))
+            print('--> Using scenario '+str(Scenario))
         
         self.LogExozodiKDE = stats.gaussian_kde(np.log(self.ExozodiData[0]))
         

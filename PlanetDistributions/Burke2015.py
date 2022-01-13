@@ -28,7 +28,7 @@ class PlanetDistribution():
         """
         Parameters
         ----------
-        Scenario: 'baseline', 'pessimistic', 'optimistic'
+        Scenario: 'baseline', 'pessimistic', 'optimistic', 'mc'
             Scenario for planet occurrence rates.
         """
         
@@ -55,6 +55,8 @@ class PlanetDistribution():
             self.alpha2 = -2.183
             self.Rbrk = 0.940 # Rearth
             self.beta = -0.576
+        elif (Scenario == 'mc'):
+            raise UserWarning('Scenario mc is not implemented yet')
         else:
             print('--> WARNING: '+str(Scenario)+' is an unknown scenario')
             Scenario = 'baseline'

@@ -28,6 +28,7 @@ class StarCatalog():
                  Stypes=['A', 'F', 'G', 'K', 'M'],
                  Dist_range=[0, 20], # pc
                  Dec_range=[-90, 90], # deg
+                 Teff_range=[0., np.inf], # K
                  Path='StarCatalogs/CrossfieldBrightSample.tbl'):
         """
         Parameters
@@ -38,6 +39,8 @@ class StarCatalog():
             Distance range (pc) to be included.
         Dec_range: list
             Declination range (deg) to be included.
+        Teff_range: list
+            Effective temperature range (K) to be included.
         Path: str
             Path of CrossfieldBrightSample.
         """
@@ -45,6 +48,7 @@ class StarCatalog():
         self.SC = self.read(Stypes,
                             Dist_range,
                             Dec_range,
+                            Teff_range,
                             Path)
         
         pass
@@ -53,6 +57,7 @@ class StarCatalog():
              Stypes=['A', 'F', 'G', 'K', 'M'],
              Dist_range=[0, 20], # pc
              Dec_range=[-90, 90], # deg
+             Teff_range=[0., np.inf], # K
              Path='StarCatalogs/CrossfieldBrightSample.tbl'):
         """
         Parameters
@@ -63,6 +68,8 @@ class StarCatalog():
             Distance range (pc) to be included.
         Dec_range: list
             Declination range (deg) to be included.
+        Teff_range: list
+            Effective temperature range (K) to be included.
         Path: str
             Path of CrossfieldBrightSample.
         
@@ -116,8 +123,11 @@ class StarCatalog():
                 Dec += [float(temp)-int(SC_in[i]['DEC_2000'][4:6])/60.-float(SC_in[i]['DEC_2000'][7:14])/3600.] # deg
             temp3 = (Dec_range is None) or (Dec_range[0] <= Dec[-1] <= Dec_range[1])
             
+            # Check whether effective temperature fits.
+            temp4 = (Teff_range is None) or (Teff_range[0] <= SC_in[i]['teff'] <= Teff_range[1])
+            
             # Fill output star catalog.
-            if (temp1 and temp2 and temp3):
+            if (temp1 and temp2 and temp3 and temp4):
                 RA = (int(SC_in[i]['RA_2000'][0:2])+int(SC_in[i]['RA_2000'][3:5])/60.+float(SC_in[i]['RA_2000'][6:13])/3600.)*360./24. # deg
                 SC_out.add_row([SC_in[i]['DiscoveryName'], Dist[-1], Stype[-1], SC_in[i]['r'], SC_in[i]['teff'], SC_in[i]['m'], RA, Dec[-1]])
         
@@ -142,6 +152,12 @@ class StarCatalog():
             print('--> Declination in [%.2f, %.2f] deg' % (text6, text7))
         else:
             print('--> Declination in [%.2f, %.2f] deg' % (text6, text7)+', declination limits [%.2f, %.2f] deg' % (Dec_range[0], Dec_range[1]))
+        text8 = np.min(SC_out['Teff'])
+        text9 = np.max(SC_out['Teff'])
+        if (Teff_range is None):
+            print('--> Effective temperature in [%.1f, %.1f] K' % (text8, text9))
+        else:
+            print('--> Effective temperature in [%.1f, %.1f] K' % (text8, text9)+', effective temperature limits [%.1f, %.1f] K' % (Teff_range[0], Teff_range[1]))
         
         return SC_out
     

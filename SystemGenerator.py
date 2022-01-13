@@ -36,6 +36,7 @@ class SystemGenerator():
                  Stypes,
                  Dist_range, # pc
                  Dec_range, # deg
+                 Teff_range, # K
                  Scenario,
                  SummaryPlots,
                  Ntest,
@@ -69,7 +70,9 @@ class SystemGenerator():
             Distance range (pc) to be included.
         Dec_range: list
             Declination range (deg) to be included.
-        Scenario: 'baseline', 'pessimistic', 'optimistic'
+        Teff_range: list
+            Effective temperature range (K) to be included.
+        Scenario: 'baseline', 'pessimistic', 'optimistic', 'mc'
             Scenario for planet occurrence rates.
         SummaryPlots: bool
             If True, makes summary plots after importing a module.
@@ -81,7 +84,15 @@ class SystemGenerator():
             If True, blocks plots when showing.
         """
         
-        # Create directory to which summary plots are saved
+        # Get scenario.
+        if ((Scenario == 'baseline') or (Scenario == 'optimistic') or (Scenario == 'pessimistic') or (Scenario == 'mc')):
+            self.Scenario = Scenario
+        else:
+            print('--> WARNING: '+str(Scenario)+' is an unknown scenario')
+            self.Scenario = 'baseline'
+        print('--> Using scenario '+str(self.Scenario))
+        
+        # Create directory to which summary plots are saved.
         if (FigDir is not None and not os.path.exists(FigDir)):
             os.makedirs(FigDir)
         
@@ -93,7 +104,8 @@ class SystemGenerator():
         self.StarCatalog = self.getStarCatalog(StarCatalog,
                                                Stypes,
                                                Dist_range,
-                                               Dec_range)
+                                               Dec_range,
+                                               Teff_range)
         if (SummaryPlots == True):
             self.StarCatalog.SummaryPlot(FigDir=FigDir,
                                          block=block)
@@ -176,11 +188,13 @@ class SystemGenerator():
                        StarCatalog,
                        Stypes,
                        Dist_range, # pc
-                       Dec_range): # deg
+                       Dec_range, # deg
+                       Teff_range): # K
         
         return StarCatalog.StarCatalog(Stypes,
                                        Dist_range,
-                                       Dec_range)
+                                       Dec_range,
+                                       Teff_range)
     
     def getPlanetDistributions(self,
                                StypeToModel,
@@ -191,7 +205,7 @@ class SystemGenerator():
         StypeToModel: dict
             Dictionary mapping the spectral types to planet distribution
             modules.
-        Scenario: 'baseline', 'pessimistic', 'optimistic'
+        Scenario: 'baseline', 'pessimistic', 'optimistic', 'mc'
             Scenario for planet occurrence rates.
         
         Returns
@@ -330,7 +344,7 @@ class SystemGenerator():
         ----------
         ExozodiModel: module
             Module of type ExozodiModel.
-        Scenario: 'baseline', 'pessimistic', 'optimistic'
+        Scenario: 'baseline', 'pessimistic', 'optimistic', 'mc'
             Scenario for exozodi level.
         
         Returns
@@ -358,25 +372,30 @@ class SystemGenerator():
         
         t0 = time.time()
         
-        # Go through the star catalog.
+        # Go through the number of universes.
         Nstars = len(self.StarCatalog.SC)
-        for i in range(Nstars):
+        PDs = list(set(self.PlanetDistributions.values()))
+        for i in range(Nuniverses):
             
-            # Get star.
-            self.Star = self.getStar(i)
+            # Re-draw occurrence rate parameters for 'mc' scenario.
+            if (self.Scenario == 'mc'):
+                for j in range(len(PDs)):
+                    PDs[j].redraw_params()
             
-            # Apply scaling for the planet occurrence rates.
-            if (self.ScalingModel is None):
-                Scale = 1.
-            else:
-                Scale = self.ScalingModel.getScale(self.Star)
-            
-            # Go through the number of universes to be simulated.
-            for j in range(Nuniverses):
+            for j in range(Nstars):
+                
+                # Get star.
+                self.Star = self.getStar(j)
+                
+                # Apply scaling for the planet occurrence rates.
+                if (self.ScalingModel is None):
+                    Scale = 1.
+                else:
+                    Scale = self.ScalingModel.getScale(self.Star)
                 
                 # Get system.
-                self.System = self.getSystem(i,
-                                             j,
+                self.System = self.getSystem(j,
+                                             i,
                                              Scale)
                 
                 # If there is a planet distribution for the star's spectral
@@ -389,10 +408,46 @@ class SystemGenerator():
                         self.TableFlag = True
                     else:
                         self.System.append(Name)
-                
-            sys.stdout.write('\r--> Star %.0f of %.0f, scaling = %.1f' % ((i+1), Nstars, Scale))
+            
+            sys.stdout.write('\r--> Universe %.0f of %.0f' % ((i+1), Nuniverses))
             sys.stdout.flush()
         print('')
+        
+        # # Go through the star catalog.
+        # Nstars = len(self.StarCatalog.SC)
+        # for i in range(Nstars):
+            
+        #     # Get star.
+        #     self.Star = self.getStar(i)
+            
+        #     # Apply scaling for the planet occurrence rates.
+        #     if (self.ScalingModel is None):
+        #         Scale = 1.
+        #     else:
+        #         Scale = self.ScalingModel.getScale(self.Star)
+            
+        #     # Go through the number of universes to be simulated.
+        #     for j in range(Nuniverses):
+                
+        #         # Get system.
+        #         self.System = self.getSystem(i,
+        #                                      j,
+        #                                      Scale)
+                
+        #         # If there is a planet distribution for the star's spectral
+        #         # type (i.e. if the system is not None), create a new
+        #         # planet population table (if it hasn't already been created)
+        #         # and write the simulated planets to it.
+        #         if (self.System is not None):
+        #             if (self.TableFlag == False):
+        #                 self.System.write(Name)
+        #                 self.TableFlag = True
+        #             else:
+        #                 self.System.append(Name)
+                
+        #     sys.stdout.write('\r--> Star %.0f of %.0f, scaling = %.1f' % ((i+1), Nstars, Scale))
+        #     sys.stdout.flush()
+        # print('')
         
         t1 = time.time()
         

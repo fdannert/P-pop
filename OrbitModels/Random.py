@@ -27,13 +27,13 @@ class OrbitModel():
     
     def getOrbit(self,
                  ep,
-                 fixi=True):
+                 fixip=True):
         """
         Parameters
         ----------
         ep: array
             Eccentricity of drawn planets.
-        fixi: bool
+        fixip: bool
             If True, returns same inclination for all drawn planets.
         
         Returns
@@ -50,7 +50,7 @@ class OrbitModel():
         
         # Inclination distributed uniformly on the sphere, either fixed or
         # independent for all drawn planets.
-        if (fixi == True):
+        if (fixip == True):
             ip = np.array([np.arccos(2.*np.random.rand()-1.)]*len(ep)) # rad
         else:
             ip = np.arccos(2.*np.random.rand(len(ep))-1.) # rad
@@ -116,7 +116,7 @@ class OrbitModel():
         
         ep = EccentricityModel.getEccentricity(np.zeros(Ntest))
         ip, Omegap, omegap, thetap = self.getOrbit(ep,
-                                                   fixi=False)
+                                                   fixip=False)
         
         print('--> Random:\n%.2f+-%.2f rad planet inclination\n%.2f+-%.2f rad planet true anomaly' % (np.mean(ip), np.std(ip), np.mean(thetap), np.std(thetap)))
         

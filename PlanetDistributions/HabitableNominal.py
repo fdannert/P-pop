@@ -34,7 +34,7 @@ class PlanetDistribution():
         """
         Parameters
         ----------
-        Scenario: 'baseline', 'pessimistic', 'optimistic'
+        Scenario: 'baseline', 'pessimistic', 'optimistic', 'mc'
             Scenario for planet occurrence rates.
         """
         

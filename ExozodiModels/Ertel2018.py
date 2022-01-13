@@ -28,7 +28,7 @@ class ExozodiModel():
         """
         Parameters
         ----------
-        Scenario: 'baseline', 'pessimistic', 'optimistic'
+        Scenario: 'baseline', 'pessimistic', 'optimistic', 'mc'
             Scenario for exozodi level.
         """
         

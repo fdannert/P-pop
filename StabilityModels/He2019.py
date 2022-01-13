@@ -30,7 +30,7 @@ class StabilityModel():
         
         # Max number of re-draws if system is unstable and number of times no
         # stable system could be found after self.MaxTrials trials.
-        self.MaxTrials = 1000.
+        self.MaxTrials = 100.
         self.Nfails = 0
         
         # Mutual Hill radius above which planets are considered to be stable.
@@ -48,8 +48,6 @@ class StabilityModel():
              PlanetDistribution,
              MassModel,
              EccentricityModel,
-             Rp_range=[0.5, 16.], # Rearth
-             Porb_range=[0.5, 500.], # d
              Nplanets=None,
              Scale=1.,
              returnTrials=False):
@@ -64,12 +62,89 @@ class StabilityModel():
             Instance of class MassModel.
         EccentricityModel: instance
             Instance of class EccentricityModel.
-        Rp_range: list
-            Requested planet radius range (Rearth).
-            NOT IMPLEMENTED, USES DEFAULT!
-        Porb_range: list
-            Requested planet orbital period range (d).
-            NOT IMPLEMENTED, USES DEFAULT!
+        Nplanets: None, int
+            Number of planets to be drawn.
+        Scale: float
+            Scaling factor for the planet occurrence rates.
+        returnTrials: bool
+            If True, returns number of trials required for drawing a stable
+            system.
+        
+        Returns
+        -------
+        Rp: array
+            Radius (Rearth) of drawn planets of stable system.
+        Porb: array
+            Orbital period (d) of drawn planets of stable system.
+        Mp: array
+            Mass (Mearth) of drawn planets of stable system.
+        ep: array
+            Eccentricity of drawn planets of stable system.
+        _Trials: int
+            Number of trials required for drawing a stable system.
+        """
+        
+        # Try to draw a stable system with the correct number of planets.
+        if (returnTrials == False):
+            Rp, Porb, Mp, ep = self.draw_temp(Star=Star,
+                                              PlanetDistribution=PlanetDistribution,
+                                              MassModel=MassModel,
+                                              EccentricityModel=EccentricityModel,
+                                              Nplanets=Nplanets,
+                                              Scale=Scale,
+                                              returnTrials=returnTrials)
+        else:
+            Rp, Porb, Mp, ep, Trials = self.draw_temp(Star=Star,
+                                                      PlanetDistribution=PlanetDistribution,
+                                                      MassModel=MassModel,
+                                                      EccentricityModel=EccentricityModel,
+                                                      Nplanets=Nplanets,
+                                                      Scale=Scale,
+                                                      returnTrials=returnTrials)
+        
+        # If no stable system could be drawn, try to draw a stable system with
+        # a new number of planets.
+        while(Rp is None):
+            self.Nfails += 1
+            if (returnTrials == False):
+                Rp, Porb, Mp, ep = self.draw_temp(Star=Star,
+                                                  PlanetDistribution=PlanetDistribution,
+                                                  MassModel=MassModel,
+                                                  EccentricityModel=EccentricityModel,
+                                                  Scale=Scale,
+                                                  returnTrials=returnTrials)
+            else:
+                Rp, Porb, Mp, ep, Trials = self.draw_temp(Star=Star,
+                                                          PlanetDistribution=PlanetDistribution,
+                                                          MassModel=MassModel,
+                                                          EccentricityModel=EccentricityModel,
+                                                          Scale=Scale,
+                                                          returnTrials=returnTrials)
+        
+        if (returnTrials == False):
+            return Rp, Porb, Mp, ep
+        else:
+            return Rp, Porb, Mp, ep, Trials
+    
+    def draw_temp(self,
+                  Star,
+                  PlanetDistribution,
+                  MassModel,
+                  EccentricityModel,
+                  Nplanets=None,
+                  Scale=1.,
+                  returnTrials=False):
+        """
+        Parameters
+        ----------
+        Star: instance
+            Instance of class Star.
+        PlanetDistribution: instance
+            Instance of class PlanetDistribution.
+        MassModel: instance
+            Instance of class MassModel.
+        EccentricityModel: instance
+            Instance of class EccentricityModel.
         Nplanets: None, int
             Number of planets to be drawn.
         Scale: float
@@ -138,75 +213,65 @@ class StabilityModel():
                                                   Mp,
                                                   ep)
             
-            # If the system is unstable, draw a new system.
-            while (Stability == False):
+            # If the system is unstable and the max number of re-draws has not
+            # been exceeded, draw a new system.
+            while ((Stability == False) and (Trials < self.MaxTrials)):
                 
-                # Try self.MaxTrials times.
-                if (Trials <= self.MaxTrials):
+                if (PlanetDistribution.returns == ['Rp', 'Porb']):
                     
-                    if (PlanetDistribution.returns == ['Rp', 'Porb']):
-                        
-                        # Draw planet radius and planet orbital period. Keep the same
-                        # number of planets.
-                        Rp, Porb = PlanetDistribution.draw(Rp_range,
-                                                           Porb_range,
-                                                           Nplanets,
-                                                           Scale=Scale,
-                                                           Star=Star) # Rearth, d
-                        
-                        # Sort planets by orbital period.
-                        ww = np.argsort(Porb)
-                        Rp = Rp[ww] # Rearth
-                        Porb = Porb[ww] # d
-                        
-                        # Draw planet mass and planet eccentricity.
-                        Mp = MassModel.RadiusToMass(Rp) # Mearth
-                        ep = EccentricityModel.getEccentricity(Porb)
+                    # Draw planet radius and planet orbital period. Keep the same
+                    # number of planets.
+                    Rp, Porb = PlanetDistribution.draw(Nplanets=Nplanets,
+                                                       Scale=Scale,
+                                                       Star=Star) # Rearth, d
                     
-                    elif (PlanetDistribution.returns == ['Mp', 'Porb']):
-                        
-                        # Draw planet mass and planet orbital period.
-                        Mp, Porb = PlanetDistribution.draw(Nplanets=Nplanets,
-                                                           Scale=Scale,
-                                                           Star=Star) # Mearth, d
-                        
-                        # Sort planets by orbital period.
-                        ww = np.argsort(Porb)
-                        Mp = Mp[ww] # Rearth
-                        Porb = Porb[ww] # d
-                        
-                        # Draw planet radius and planet eccentricity.
-                        Rp = MassModel.MassToRadius(Mp) # Rearth
-                        ep = EccentricityModel.getEccentricity(Porb)
+                    # Sort planets by orbital period.
+                    ww = np.argsort(Porb)
+                    Rp = Rp[ww] # Rearth
+                    Porb = Porb[ww] # d
                     
-                    else:
-                        raise UserWarning()
-                    
-                    # Check system stability.
-                    Stability = self.CheckSystemStability(Star.Mass,
-                                                          Porb,
-                                                          Mp,
-                                                          ep)
-                    Trials += 1
+                    # Draw planet mass and planet eccentricity.
+                    Mp = MassModel.RadiusToMass(Rp) # Mearth
+                    ep = EccentricityModel.getEccentricity(Porb)
                 
-                # If no stable system could be found, draw a new number of
-                # planets.
+                elif (PlanetDistribution.returns == ['Mp', 'Porb']):
+                    
+                    # Draw planet mass and planet orbital period.
+                    Mp, Porb = PlanetDistribution.draw(Nplanets=Nplanets,
+                                                       Scale=Scale,
+                                                       Star=Star) # Mearth, d
+                    
+                    # Sort planets by orbital period.
+                    ww = np.argsort(Porb)
+                    Mp = Mp[ww] # Rearth
+                    Porb = Porb[ww] # d
+                    
+                    # Draw planet radius and planet eccentricity.
+                    Rp = MassModel.MassToRadius(Mp) # Rearth
+                    ep = EccentricityModel.getEccentricity(Porb)
+                
                 else:
-                    self.Nfails += 1
-                    return self.draw(Star,
-                                     PlanetDistribution,
-                                     MassModel,
-                                     EccentricityModel,
-                                     Rp_range=Rp_range, # Rearth
-                                     Porb_range=Porb_range, # d
-                                     Nplanets=None,
-                                     Scale=Scale,
-                                     returnTrials=returnTrials)
-        
-        if (returnTrials == False):
-            return Rp, Porb, Mp, ep
+                    raise UserWarning()
+                
+                # Check system stability.
+                Stability = self.CheckSystemStability(Star.Mass,
+                                                      Porb,
+                                                      Mp,
+                                                      ep)
+                Trials += 1
         else:
-            return Rp, Porb, Mp, ep, Trials
+            Stability = True
+        
+        if (Stability == True):
+            if (returnTrials == False):
+                return Rp, Porb, Mp, ep
+            else:
+                return Rp, Porb, Mp, ep, Trials
+        else:
+            if (returnTrials == False):
+                return None, None, None, None
+            else:
+                return None, None, None, None, None
     
     def CheckSystemStability(self,
                              Ms, # Msun

@@ -31,7 +31,7 @@ class PlanetDistribution():
         """
         Parameters
         ----------
-        Scenario: 'baseline', 'pessimistic', 'optimistic'
+        Scenario: 'baseline', 'pessimistic', 'optimistic', 'mc'
             Scenario for planet occurrence rates.
         """
         
@@ -48,6 +48,8 @@ class PlanetDistribution():
         elif (Scenario == 'optimistic'):
             self.Rates = np.array([[1.38, 8.42, 20.59, 0., 0.], [1.95, 9.94, 0., 26.85, 28.85], [0.41, 4.15, 0., 24.59, 19.98], [0., 2.72, 18.73, 27.58, 18.08], [0., 1.59, 8.29, 14.51, 8.61], [0., 0.65, 3.25, 3.37, 1.97], [0., 0.38, 1.05, 0.56, 0.]])*1e-2
             self.Rates += np.array([[0.93, 3.53, 8.7, 0., 0.], [0.93, 2.82, 0., 10.7, 28.66], [0.51, 1.94, 0., 9.08, 16.07], [0., 1.73, 5.39, 9.42, 13.21], [0., 1.39, 3.96, 7.71, 9.78], [0., 1., 2.72, 4.62, 5.87], [0., 0.77, 1.82, 2.32, 0.]])*1e-2
+        elif (Scenario == 'mc'):
+            raise UserWarning('Scenario mc is not implemented yet')
         else:
             print('--> WARNING: '+str(Scenario)+' is an unknown scenario')
             Scenario = 'baseline'

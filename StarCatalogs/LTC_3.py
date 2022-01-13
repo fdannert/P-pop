@@ -26,6 +26,7 @@ class StarCatalog():
                  Stypes=['B', 'A', 'F', 'G', 'K', 'M', 'D'],
                  Dist_range=[0, 30], # pc
                  Dec_range=[-90, 90], # deg
+                 Teff_range=[0., np.inf], # K
                  Path='StarCatalogs/LTC_3.csv'):
         """
         Parameters
@@ -36,6 +37,8 @@ class StarCatalog():
             Distance range (pc) to be included.
         Dec_range: list
             Declination range (deg) to be included.
+        Teff_range: list
+            Effective temperature range (K) to be included.
         Path: str
             Path of LTC (version 3).
         """
@@ -43,6 +46,7 @@ class StarCatalog():
         self.SC = self.read(Stypes,
                             Dist_range,
                             Dec_range,
+                            Teff_range,
                             Path)
         
         pass
@@ -51,6 +55,7 @@ class StarCatalog():
              Stypes=['B', 'A', 'F', 'G', 'K', 'M', 'D'],
              Dist_range=[0, 30], # pc
              Dec_range=[-90, 90], # deg
+             Teff_range=[0., np.inf], # K
              Path='StarCatalogs/LTC_3.csv'):
         """
         Parameters
@@ -61,6 +66,8 @@ class StarCatalog():
             Distance range (pc) to be included.
         Dec_range: list
             Declination range (deg) to be included.
+        Teff_range: list
+            Effective temperature range (K) to be included.
         Path: str
             Path of LTC (version 3).
         
@@ -221,8 +228,11 @@ class StarCatalog():
             # Check whether declination fits.
             temp3 = (Dec_range is None) or (Dec_range[0] <= Dec[i] <= Dec_range[1])
             
+            # Check whether effective temperature fits.
+            temp4 = (Teff_range is None) or (Teff_range[0] <= Teff[i] <= Teff_range[1])
+            
             # Fill output star catalog.
-            if (temp1 and temp2 and temp3):
+            if (temp1 and temp2 and temp3 and temp4):
                 SC_out.add_row([Name[i], Dist[i], Stype[i], Rad[i], Teff[i], Mass[i], RA[i], Dec[i], Vmag[i], Jmag[i], Hmag[i], WDSsep[i], WDSdmag[i], lGal[i], bGal[i]])
         
         # Print.
@@ -246,6 +256,12 @@ class StarCatalog():
             print('--> Declination in [%.2f, %.2f] deg' % (text6, text7))
         else:
             print('--> Declination in [%.2f, %.2f] deg' % (text6, text7)+', declination limits [%.2f, %.2f] deg' % (Dec_range[0], Dec_range[1]))
+        text8 = np.min(SC_out['Teff'])
+        text9 = np.max(SC_out['Teff'])
+        if (Teff_range is None):
+            print('--> Effective temperature in [%.1f, %.1f] K' % (text8, text9))
+        else:
+            print('--> Effective temperature in [%.1f, %.1f] K' % (text8, text9)+', effective temperature limits [%.1f, %.1f] K' % (Teff_range[0], Teff_range[1]))
         
         return SC_out
     

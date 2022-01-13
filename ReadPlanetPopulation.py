@@ -65,6 +65,8 @@ class PlanetPopulation():
         Stype = []
         RA = [] # deg
         Dec = [] # deg
+        lGal = [] # deg
+        bGal = [] # deg
         
         Nlines = len(TableLines)
         for i, Line in enumerate(TableLines):
@@ -74,7 +76,44 @@ class PlanetPopulation():
                 sys.stdout.flush()
             
             tempLine = Line.split('\t')
-            if (i == 1):
+            if (i == 0):
+                if ('nMC' in tempLine):
+                    isold = True
+                else:
+                    isold = False
+            if ((isold == True) and (i == 0)):
+                # The second line (i = 1) contains the column names of the new
+                # P-pop while the first line (i = 0) contains the column names
+                # of the old P-pop.
+                ColNuniverse = np.where(np.array(tempLine) == 'nMC')[0][0]
+                ColRp = np.where(np.array(tempLine) == 'Rp')[0][0]
+                ColPorb = np.where(np.array(tempLine) == 'Porb')[0][0]
+                ColMp = np.where(np.array(tempLine) == 'Mp')[0][0]
+                Colep = np.where(np.array(tempLine) == 'ecc')[0][0]
+                Colip = np.where(np.array(tempLine) == 'inc')[0][0]
+                ColOmegap = np.where(np.array(tempLine) == 'Omega')[0][0]
+                Colomegap = np.where(np.array(tempLine) == 'omega')[0][0]
+                Colthetap = np.where(np.array(tempLine) == 'theta')[0][0]
+                ColAbond = np.where(np.array(tempLine) == 'Abond')[0][0]
+                ColAgeomVIS = np.where(np.array(tempLine) == 'AgeomVIS')[0][0]
+                ColAgeomMIR = np.where(np.array(tempLine) == 'AgeomMIR')[0][0]
+                Colz = np.where(np.array(tempLine) == 'zodis')[0][0]
+                Colap = np.where(np.array(tempLine) == 'a')[0][0]
+                Colrp = np.where(np.array(tempLine) == 'rp')[0][0]
+                ColAngSep = np.where(np.array(tempLine) == 'ang_sep')[0][0]
+                ColmaxAngSep = np.where(np.array(tempLine) == 'ang_sep_max')[0][0]
+                ColFp = np.where(np.array(tempLine) == 'Finc')[0][0]
+                Colfp = np.where(np.array(tempLine) == 'f')[0][0]
+                ColTp = np.where(np.array(tempLine) == 'Tp')[0][0]
+                ColNstar = np.where(np.array(tempLine) == 'nstar')[0][0]
+                ColRs = np.where(np.array(tempLine) == 'Rs')[0][0]
+                ColMs = np.where(np.array(tempLine) == 'Ms')[0][0]
+                ColTs = np.where(np.array(tempLine) == 'Ts')[0][0]
+                ColDs = np.where(np.array(tempLine) == 'dist')[0][0]
+                ColStype = np.where(np.array(tempLine) == 'stype')[0][0]
+                ColRA = np.where(np.array(tempLine) == 'ra')[0][0]
+                ColDec = np.where(np.array(tempLine) == 'dec')[0][0]
+            elif ((isold == False) and (i == 1)):
                 # The second line (i = 1) contains the column names of the new
                 # P-pop while the first line (i = 0) contains the column names
                 # of the old P-pop.
@@ -105,8 +144,10 @@ class PlanetPopulation():
                 ColDs = np.where(np.array(tempLine) == 'Ds')[0][0]
                 ColStype = np.where(np.array(tempLine) == 'Stype')[0][0]
                 ColRA = np.where(np.array(tempLine) == 'RA')[0][0]
-                ColDec = np.where(np.array(tempLine) == 'Dec')[0][0] 
-            elif (i > 1):
+                ColDec = np.where(np.array(tempLine) == 'Dec')[0][0]
+                CollGal = np.where(np.array(tempLine) == 'lGal')[0][0]
+                ColbGal = np.where(np.array(tempLine) == 'bGal')[0][0]
+            elif (((isold == True) and (i > 0)) or ((isold == False) and (i > 1))):
                 Nuniverse += [int(tempLine[ColNuniverse])]
                 Rp += [float(tempLine[ColRp])] # Rearth
                 Porb += [float(tempLine[ColPorb])] # d
@@ -135,6 +176,12 @@ class PlanetPopulation():
                 Stype += [str(tempLine[ColStype])]
                 RA += [float(tempLine[ColRA])] # deg
                 Dec += [float(tempLine[ColDec])] # deg
+                try:
+                    lGal += [float(tempLine[CollGal])] # deg
+                    bGal += [float(tempLine[ColbGal])] # deg
+                except:
+                    lGal += [None] # deg
+                    bGal += [None] # deg
         sys.stdout.write('\rProcessed line %.0f of %.0f' % (Nlines, Nlines))
         sys.stdout.flush()
         print('')
@@ -167,6 +214,8 @@ class PlanetPopulation():
         self.Stype = np.array(Stype)
         self.RA = np.array(RA) # deg
         self.Dec = np.array(Dec) # deg
+        self.lGal = np.array(lGal) # deg
+        self.bGal = np.array(bGal) # deg
         
         self.Phot = {}
         
