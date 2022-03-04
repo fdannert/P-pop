@@ -78,10 +78,13 @@ class PlanetPopulation():
             tempLine = Line.split('\t')
             if (i == 0):
                 if ('nMC' in tempLine):
-                    isold = True
+                    self.isold = True
                 else:
-                    isold = False
-            if ((isold == True) and (i == 0)):
+                    self.isold = False
+            if (i == 1):
+                if ('Nuniverse' in tempLine):
+                    self.isold = False
+            if ((self.isold == True) and (i == 0)):
                 # The second line (i = 1) contains the column names of the new
                 # P-pop while the first line (i = 0) contains the column names
                 # of the old P-pop.
@@ -113,7 +116,7 @@ class PlanetPopulation():
                 ColStype = np.where(np.array(tempLine) == 'stype')[0][0]
                 ColRA = np.where(np.array(tempLine) == 'ra')[0][0]
                 ColDec = np.where(np.array(tempLine) == 'dec')[0][0]
-            elif ((isold == False) and (i == 1)):
+            elif ((self.isold == False) and (i == 1)):
                 # The second line (i = 1) contains the column names of the new
                 # P-pop while the first line (i = 0) contains the column names
                 # of the old P-pop.
@@ -147,7 +150,7 @@ class PlanetPopulation():
                 ColDec = np.where(np.array(tempLine) == 'Dec')[0][0]
                 CollGal = np.where(np.array(tempLine) == 'lGal')[0][0]
                 ColbGal = np.where(np.array(tempLine) == 'bGal')[0][0]
-            elif (((isold == True) and (i > 0)) or ((isold == False) and (i > 1))):
+            elif (((self.isold == True) and (i > 0)) or ((self.isold == False) and (i > 1))):
                 Nuniverse += [int(tempLine[ColNuniverse])]
                 Rp += [float(tempLine[ColRp])] # Rearth
                 Porb += [float(tempLine[ColPorb])] # d
@@ -296,14 +299,21 @@ class PlanetPopulation():
                 sys.stdout.flush()
             
             tempLine = Line.split('\t')
-            if (i == 1):
+            if ((self.isold == True) and (i == 0)):
                 # The second line (i = 1) contains the column names of the new
                 # P-pop while the first line (i = 0) contains the column names
                 # of the old P-pop.
                 for j in range(len(tempLine)-1):
                     self.Phot[Tag]['HEAD'] += [tempLine[j]]
                     self.Phot[Tag]['DATA'] += [[]]
-            elif (i > 1):
+            elif ((self.isold == False) and (i == 1)):
+                # The second line (i = 1) contains the column names of the new
+                # P-pop while the first line (i = 0) contains the column names
+                # of the old P-pop.
+                for j in range(len(tempLine)-1):
+                    self.Phot[Tag]['HEAD'] += [tempLine[j]]
+                    self.Phot[Tag]['DATA'] += [[]]
+            elif (((self.isold == True) and (i > 0)) or ((self.isold == False) and (i > 1))):
                 for j in range(len(tempLine)-1):
                     self.Phot[Tag]['DATA'][j] += [float(tempLine[j])]
         sys.stdout.write('\rProcessed line %.0f of %.0f' % (Nlines, Nlines))
