@@ -19,7 +19,7 @@
 
 # Don't print annoying warnings. Comment out if you want to see them.
 import warnings
-warnings.filterwarnings('ignore')
+#warnings.filterwarnings('ignore')
 
 
 # =============================================================================
@@ -37,9 +37,9 @@ from PlanetDistributions import Fressin2013,\
                                 Weiss2018KDE,\
                                 HabitableNominal,\
                                 HabitablePessimistic,\
-                                Fernandes2019Symm,\
-                                Bryson2021Model1Hab2Low,\
-                                Bryson2021Model1Hab2High
+                                Fernandes2019Symm#,\
+                                #Bryson2021Model1Hab2Low,\
+                                #Bryson2021Model1Hab2High
 from ScalingModels import BinarySuppression
 from MassModels import Chen2017
 from EccentricityModels import Circular
@@ -111,8 +111,8 @@ ExozodiModel = Ertel2020
 # Select whether you want to display summary plots after loading the catalogs,
 # distributions and models selected above, how many test draws should be
 # done for generating these plots, and where you want to save them.
-SummaryPlots = True
-# SummaryPlots = False
+# SummaryPlots = True
+SummaryPlots = False
 Ntest = 100000 # int
 # Ntest = 10000 # int
 # FigDir = None # if you don't want to save the summary plots
@@ -122,8 +122,8 @@ block = False
 
 # Select a name for the output planet population table and how many universes
 # should be simulated.
-Name = 'TestPlanetPopulation' # str
-Nuniverses = 1000 # int
+Name = 'FDPlanetPopulation' # str
+Nuniverses = 10 # int
 
 
 # =============================================================================

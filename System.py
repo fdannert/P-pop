@@ -265,7 +265,7 @@ class System():
         Table.write('nMC\tRp\tPorb\tMp\tecc\tinc\tOmega\tomega\ttheta\tAbond\tAgeomVIS\tAgeomMIR\tzodis\ta\trp\tang_sep\tang_sep_max\tFinc\tf\tTp\tnstar\tRs\tMs\tTs\tdist\tstype\tra\tdec\tlGal\tbGal\t\n')
         
         # New header.
-        Table.write('Nuniverse\tRp\tPorb\tMp\tep\tip\tOmegap\tomegap\tthetap\tAbond\tAgeomVIS\tAgeomMIR\tz\tap\trp\tAngSep\tmaxAngSep\tFp\tfp\tTp\tNstar\tRs\tMs\tTs\tDs\tStype\tRA\tDec\tlGal\tbGal\t\n')
+        Table.write('Nuniverse\tRp\tPorb\tMp\tep\tip\tOmegap\tomegap\tthetap\tAbond\tAgeomVIS\tAgeomMIR\tz\tap\trp\tAngSep\tmaxAngSep\tFp\tfp\tTp\tNstar\tRs\tMs\tTs\tDs\tStype\tRA\tDec\tlGal\tbGal\tname\t\n')
         
         Table.close()
         
@@ -313,6 +313,7 @@ class System():
             - Dec: host star declination (deg).
             - lGal: Galactic longitude (deg).
             - bGal: Galactic latitude (deg).
+            - name: name of the star.
         """
         
         Table = open(Name+'.txt', 'a')
@@ -320,10 +321,72 @@ class System():
         # Write the simulated planets to the planet population table.
         if (self.Star.lGal is None or self.Star.bGal is None):
             for i in range(len(self.Rp)):
-                Table.write('%.0f\t' % self.Nuniverse+'%.5f\t' % self.Rp[i]+'%.5f\t' % self.Porb[i]+'%.5f\t' % self.Mp[i]+'%.5f\t' % self.ep[i]+'%.5f\t' % self.ip[i]+'%.5f\t' % self.Omegap[i]+'%.5f\t' % self.omegap[i]+'%.5f\t' % self.thetap[i]+'%.5f\t' % self.Abond[i]+'%.5f\t' % self.AgeomVIS[i]+'%.5f\t' % self.AgeomMIR[i]+'%.5f\t' % self.z+'%.5f\t' % self.ap[i]+'%.5f\t' % self.rp[i]+'%.5f\t' % self.AngSep[i]+'%.5f\t' % self.maxAngSep[i]+'%.5f\t' % self.Fp[i]+'%.5f\t' % self.fp[i]+'%.5f\t' % self.Tp[i]+'%.0f\t' % self.Nstar+'%.5f\t' % self.Star.Rad+'%.5f\t' % self.Star.Mass+'%.5f\t' % self.Star.Teff+'%.5f\t' % self.Star.Dist+self.Star.Stype+'\t%.5f\t' % self.Star.RA+'%.5f\t' % self.Star.Dec+'None\t'+'None\t\n')
+                Table.write('%.0f\t' % self.Nuniverse
+                            +'%.5f\t' % self.Rp[i]
+                            +'%.5f\t' % self.Porb[i]
+                            +'%.5f\t' % self.Mp[i]
+                            +'%.5f\t' % self.ep[i]
+                            +'%.5f\t' % self.ip[i]
+                            +'%.5f\t' % self.Omegap[i]
+                            +'%.5f\t' % self.omegap[i]
+                            +'%.5f\t' % self.thetap[i]
+                            +'%.5f\t' % self.Abond[i]
+                            +'%.5f\t' % self.AgeomVIS[i]
+                            +'%.5f\t' % self.AgeomMIR[i]
+                            +'%.5f\t' % self.z
+                            +'%.5f\t' % self.ap[i]
+                            +'%.5f\t' % self.rp[i]
+                            +'%.5f\t' % self.AngSep[i]
+                            +'%.5f\t' % self.maxAngSep[i]
+                            +'%.5f\t' % self.Fp[i]
+                            +'%.5f\t' % self.fp[i]
+                            +'%.5f\t' % self.Tp[i]
+                            +'%.0f\t' % self.Nstar
+                            +'%.5f\t' % self.Star.Rad
+                            +'%.5f\t' % self.Star.Mass
+                            +'%.5f\t' % self.Star.Teff
+                            +'%.5f\t' % self.Star.Dist
+                            +self.Star.Stype
+                            +'\t%.5f\t' % self.Star.RA
+                            +'%.5f\t' % self.Star.Dec
+                            +'None\t'
+                            +'None\t'
+                            +''.join(self.Star.Name.split())
+                            +'\n')
         else:
             for i in range(len(self.Rp)):
-                Table.write('%.0f\t' % self.Nuniverse+'%.5f\t' % self.Rp[i]+'%.5f\t' % self.Porb[i]+'%.5f\t' % self.Mp[i]+'%.5f\t' % self.ep[i]+'%.5f\t' % self.ip[i]+'%.5f\t' % self.Omegap[i]+'%.5f\t' % self.omegap[i]+'%.5f\t' % self.thetap[i]+'%.5f\t' % self.Abond[i]+'%.5f\t' % self.AgeomVIS[i]+'%.5f\t' % self.AgeomMIR[i]+'%.5f\t' % self.z+'%.5f\t' % self.ap[i]+'%.5f\t' % self.rp[i]+'%.5f\t' % self.AngSep[i]+'%.5f\t' % self.maxAngSep[i]+'%.5f\t' % self.Fp[i]+'%.5f\t' % self.fp[i]+'%.5f\t' % self.Tp[i]+'%.0f\t' % self.Nstar+'%.5f\t' % self.Star.Rad+'%.5f\t' % self.Star.Mass+'%.5f\t' % self.Star.Teff+'%.5f\t' % self.Star.Dist+self.Star.Stype+'\t%.5f\t' % self.Star.RA+'%.5f\t' % self.Star.Dec+'%.5f\t' % self.Star.lGal+'%.5f\t\n' % self.Star.bGal)
+                Table.write('%.0f\t' % self.Nuniverse
+                            +'%.5f\t' % self.Rp[i]
+                            +'%.5f\t' % self.Porb[i]
+                            +'%.5f\t' % self.Mp[i]
+                            +'%.5f\t' % self.ep[i]
+                            +'%.5f\t' % self.ip[i]
+                            +'%.5f\t' % self.Omegap[i]
+                            +'%.5f\t' % self.omegap[i]
+                            +'%.5f\t' % self.thetap[i]
+                            +'%.5f\t' % self.Abond[i]
+                            +'%.5f\t' % self.AgeomVIS[i]
+                            +'%.5f\t' % self.AgeomMIR[i]
+                            +'%.5f\t' % self.z
+                            +'%.5f\t' % self.ap[i]
+                            +'%.5f\t' % self.rp[i]
+                            +'%.5f\t' % self.AngSep[i]
+                            +'%.5f\t' % self.maxAngSep[i]
+                            +'%.5f\t' % self.Fp[i]
+                            +'%.5f\t' % self.fp[i]
+                            +'%.5f\t' % self.Tp[i]
+                            +'%.0f\t' % self.Nstar
+                            +'%.5f\t' % self.Star.Rad
+                            +'%.5f\t' % self.Star.Mass
+                            +'%.5f\t' % self.Star.Teff
+                            +'%.5f\t' % self.Star.Dist
+                            +self.Star.Stype
+                            +'\t%.5f\t' % self.Star.RA
+                            +'%.5f\t' % self.Star.Dec
+                            +'%.5f\t' % self.Star.lGal
+                            +'%.5f\t' % self.Star.bGal
+                            +''.join(self.Star.Name.split())
+                            +'\n')
         
         Table.close()
         
