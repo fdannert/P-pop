@@ -262,7 +262,7 @@ class System():
         Table = open(Name+'.txt', 'w')
         
         # Old header.
-        Table.write('nMC\tRp\tPorb\tMp\tecc\tinc\tOmega\tomega\ttheta\tAbond\tAgeomVIS\tAgeomMIR\tzodis\ta\trp\tang_sep\tang_sep_max\tFinc\tf\tTp\tnstar\tRs\tMs\tTs\tdist\tstype\tra\tdec\tlGal\tbGal\t\n')
+        Table.write('nMC\tRp\tPorb\tMp\tecc\tinc\tOmega\tomega\ttheta\tAbond\tAgeomVIS\tAgeomMIR\tzodis\ta\trp\tang_sep\tang_sep_max\tFinc\tf\tTp\tnstar\tRs\tMs\tTs\tdist\tstype\tra\tdec\tlGal\tbGal\tname\t\n')
         
         # New header.
         Table.write('Nuniverse\tRp\tPorb\tMp\tep\tip\tOmegap\tomegap\tthetap\tAbond\tAgeomVIS\tAgeomMIR\tz\tap\trp\tAngSep\tmaxAngSep\tFp\tfp\tTp\tNstar\tRs\tMs\tTs\tDs\tStype\tRA\tDec\tlGal\tbGal\tname\t\n')
