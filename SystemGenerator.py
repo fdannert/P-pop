@@ -114,7 +114,8 @@ class SystemGenerator():
         self.PlanetDistributions = self.getPlanetDistributions(StypeToModel,
                                                                Scenario)
         if (SummaryPlots == True):
-            temp = sorted(set(val for val in self.PlanetDistributions.values()))
+            # temp = sorted(set(val for val in self.PlanetDistributions.values()))
+            temp = set(val for val in self.PlanetDistributions.values())
             for val in temp:
                 val.SummaryPlot(Ntest=Ntest,
                                 FigDir=FigDir,
