@@ -39,7 +39,8 @@ from PlanetDistributions import Fressin2013,\
                                 HabitablePessimistic,\
                                 Fernandes2019Symm,\
                                 Bryson2021Model1Hab2Low,\
-                                Bryson2021Model1Hab2High
+                                Bryson2021Model1Hab2High,\
+                                Bergsten2022
 from ScalingModels import BinarySuppression
 from MassModels import Chen2017
 from EccentricityModels import Circular
@@ -87,6 +88,7 @@ StypeToModel = {'F': SAG13, 'G': SAG13, 'K': SAG13, 'M': Dressing2015} # used in
 # StypeToModel = {'A': Fernandes2019Symm, 'F': Fernandes2019Symm, 'G': Fernandes2019Symm, 'K': Fernandes2019Symm, 'M': Fernandes2019Symm}
 # StypeToModel = {'A': Bryson2021Model1Hab2Low, 'F': Bryson2021Model1Hab2Low, 'G': Bryson2021Model1Hab2Low, 'K': Bryson2021Model1Hab2Low, 'M': Bryson2021Model1Hab2Low}
 # StypeToModel = {'A': Bryson2021Model1Hab2High, 'F': Bryson2021Model1Hab2High, 'G': Bryson2021Model1Hab2High, 'K': Bryson2021Model1Hab2High, 'M': Bryson2021Model1Hab2High}
+# StypeToModel = {'A': Bergsten2022, 'F': Bergsten2022, 'G': Bergsten2022, 'K': Bergsten2022, 'M': Bergsten2022}
 Scenario = 'baseline'
 # Scenario = 'pessimistic' # for 1-sigma lower error bars on planet distribution
 # Scenario = 'optimistic' # for 1-sigma upper error bars on planet distribution
