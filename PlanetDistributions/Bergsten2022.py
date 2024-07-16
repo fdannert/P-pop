@@ -21,12 +21,39 @@ from scipy.integrate import quad
 # BERGSTEN2022
 # =============================================================================
 
+class rv_Rp(stats.rv_continuous):
+    
+    def __init__(self, **kwargs):
+        
+        self.Rp_lims = [1.0, 3.5] # Rearth
+        self.Porb_lims = [2., 100.] # d
+        # self.Rp_lims = [0.5, 3.5] # Rearth
+        # self.Porb_lims = [2., 2000.] # d
+        
+        super(rv_Rp, self).__init__(**kwargs)
+        
+        pass
+    
+    def dNdR(self, Rp):
+        
+        return 1. / Rp
+    
+    def _pdf(self, Rp, norm):
+        
+        return self.dNdR(Rp) / norm
+    
+    def _argcheck(self, *args):
+        
+        return 1
+
 class rv_lessless(stats.rv_continuous):
     
     def __init__(self, **kwargs):
         
-        self.Rp_lims = [1., 3.5] # Rearth
+        self.Rp_lims = [1.0, 3.5] # Rearth
         self.Porb_lims = [2., 100.] # d
+        # self.Rp_lims = [0.5, 3.5] # Rearth
+        # self.Porb_lims = [2., 2000.] # d
         
         super(rv_lessless, self).__init__(**kwargs)
         
@@ -46,7 +73,8 @@ class rv_lessless(stats.rv_continuous):
     
     def dNdP_lessless(self, Porb, Pbrk, beta1, Pcen, s, chi1, chi2, Rval):
         
-        return (Porb / Pbrk)**beta1 * self.G_less(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) / ((Rval - self.Rp_lims[0]) + self.G_less(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) - self.G_less(Porb, Pcen, s, chi1, chi2) * (Rval - self.Rp_lims[0]))
+        a, b, c = np.log(self.Rp_lims[0]), np.log(Rval), np.log(self.Rp_lims[1])
+        return (Porb / Pbrk)**beta1 * self.G_less(Porb, Pcen, s, chi1, chi2) * (c - b) / ((b - a) + self.G_less(Porb, Pcen, s, chi1, chi2) * (c - b) - self.G_less(Porb, Pcen, s, chi1, chi2) * (b - a))
     
     def _pdf(self, Porb, Pbrk, beta1, Pcen, s, chi1, chi2, Rval, norm):
         
@@ -60,8 +88,10 @@ class rv_lessmore(stats.rv_continuous):
     
     def __init__(self, **kwargs):
         
-        self.Rp_lims = [1., 3.5] # Rearth
+        self.Rp_lims = [1.0, 3.5] # Rearth
         self.Porb_lims = [2., 100.] # d
+        # self.Rp_lims = [0.5, 3.5] # Rearth
+        # self.Porb_lims = [2., 2000.] # d
         
         super(rv_lessmore, self).__init__(**kwargs)
         
@@ -81,7 +111,8 @@ class rv_lessmore(stats.rv_continuous):
     
     def dNdP_lessmore(self, Porb, Pbrk, beta1, Pcen, s, chi1, chi2, Rval):
         
-        return (Porb / Pbrk)**beta1 * self.G_more(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) / ((Rval - self.Rp_lims[0]) + self.G_more(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) - self.G_more(Porb, Pcen, s, chi1, chi2) * (Rval - self.Rp_lims[0]))
+        a, b, c = np.log(self.Rp_lims[0]), np.log(Rval), np.log(self.Rp_lims[1])
+        return (Porb / Pbrk)**beta1 * self.G_more(Porb, Pcen, s, chi1, chi2) * (c - b) / ((b - a) + self.G_more(Porb, Pcen, s, chi1, chi2) * (c - b) - self.G_more(Porb, Pcen, s, chi1, chi2) * (b - a))
     
     def _pdf(self, Porb, Pbrk, beta1, Pcen, s, chi1, chi2, Rval, norm):
         
@@ -95,8 +126,10 @@ class rv_moreless(stats.rv_continuous):
     
     def __init__(self, **kwargs):
         
-        self.Rp_lims = [1., 3.5] # Rearth
+        self.Rp_lims = [1.0, 3.5] # Rearth
         self.Porb_lims = [2., 100.] # d
+        # self.Rp_lims = [0.5, 3.5] # Rearth
+        # self.Porb_lims = [2., 2000.] # d
         
         super(rv_moreless, self).__init__(**kwargs)
         
@@ -116,7 +149,8 @@ class rv_moreless(stats.rv_continuous):
     
     def dNdP_moreless(self, Porb, Pbrk, beta2, Pcen, s, chi1, chi2, Rval):
         
-        return (Porb / Pbrk)**beta2 * self.G_less(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) / ((Rval - self.Rp_lims[0]) + self.G_less(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) - self.G_less(Porb, Pcen, s, chi1, chi2) * (Rval - self.Rp_lims[0]))
+        a, b, c = np.log(self.Rp_lims[0]), np.log(Rval), np.log(self.Rp_lims[1])
+        return (Porb / Pbrk)**beta2 * self.G_less(Porb, Pcen, s, chi1, chi2) * (c - b) / ((b - a) + self.G_less(Porb, Pcen, s, chi1, chi2) * (c - b) - self.G_less(Porb, Pcen, s, chi1, chi2) * (b - a))
     
     def _pdf(self, Porb, Pbrk, beta2, Pcen, s, chi1, chi2, Rval, norm):
         
@@ -130,8 +164,10 @@ class rv_moremore(stats.rv_continuous):
     
     def __init__(self, **kwargs):
         
-        self.Rp_lims = [1., 3.5] # Rearth
+        self.Rp_lims = [1.0, 3.5] # Rearth
         self.Porb_lims = [2., 100.] # d
+        # self.Rp_lims = [0.5, 3.5] # Rearth
+        # self.Porb_lims = [2., 2000.] # d
         
         super(rv_moremore, self).__init__(**kwargs)
         
@@ -151,7 +187,8 @@ class rv_moremore(stats.rv_continuous):
     
     def dNdP_moremore(self, Porb, Pbrk, beta2, Pcen, s, chi1, chi2, Rval):
         
-        return (Porb / Pbrk)**beta2 * self.G_more(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) / ((Rval - self.Rp_lims[0]) + self.G_more(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) - self.G_more(Porb, Pcen, s, chi1, chi2) * (Rval - self.Rp_lims[0]))
+        a, b, c = np.log(self.Rp_lims[0]), np.log(Rval), np.log(self.Rp_lims[1])
+        return (Porb / Pbrk)**beta2 * self.G_more(Porb, Pcen, s, chi1, chi2) * (c - b) / ((b - a) + self.G_more(Porb, Pcen, s, chi1, chi2) * (c - b) - self.G_more(Porb, Pcen, s, chi1, chi2) * (b - a))
     
     def _pdf(self, Porb, Pbrk, beta2, Pcen, s, chi1, chi2, Rval, norm):
         
@@ -181,6 +218,7 @@ class PlanetDistribution():
         # Model parameters.
         self.returns = ['Rp', 'Porb']
         self.Ms_bins = [0.56, 0.81, 0.91, 1.01, 1.16, 1.63] # Msun
+        # Different parameters for each stellar mass bin.
         self.F0 = [0.89, 0.70, 0.63, 0.61, 0.50]
         self.Pbrk = [14.29, 6.13, 6.92, 12.02, 6.96] # d
         self.beta1 = [0.15, 1.19, 0.91, 0.44, 1.90]
@@ -190,27 +228,75 @@ class PlanetDistribution():
         self.chi1 = [0.75, 0.73, 0.83, 0.83, 0.87]
         self.chi2 = [0.33, 0.36, 0.26, 0.31, 0.39]
         self.Rval = [1.82, 1.93, 1.98, 2.04, 2.17]
-        self.Rp_lims = [1., 3.5] # Rearth
+        # Same parameters for each stellar mass bin.
+        # self.F0 = [0.63]*5
+        # self.Pbrk = [9.98]*5 # d
+        # self.beta1 = [0.58]*5
+        # self.beta2 = [-0.90]*5
+        # self.Pcen = [11.33]*5 # d
+        # self.s = [2.49]*5 # d
+        # self.chi1 = [0.84]*5
+        # self.chi2 = [0.38]*5
+        # self.Rval = [1.82, 1.93, 1.98, 2.04, 2.17]
+        
+        # Default bounds.
+        self.Rp_lims = [1.0, 3.5] # Rearth
         self.Porb_lims = [2., 100.] # d
-        self.C_lessless_norm = []
+        self.CR_less_org = []
+        self.CR_more_org = []
+        self.CP_lessless_org = []
+        self.C_lessless_org = []
+        self.CP_lessmore_org = []
+        self.C_lessmore_org = []
+        self.CP_moreless_org = []
+        self.C_moreless_org = []
+        self.CP_moremore_org = []
+        self.C_moremore_org = []
+        for i in range(len(self.F0)):
+            self.CR_less_org += [quad(self.dNdR, self.Rp_lims[0], self.Rval[i])[0]]
+            self.CR_more_org += [quad(self.dNdR, self.Rval[i], self.Rp_lims[1])[0]]
+            self.CP_lessless_org += [quad(self.dNdP_lessless, self.Porb_lims[0], self.Pbrk[i], args=(self.Pbrk[i], self.beta1[i], self.Pcen[i], self.s[i], self.chi1[i], self.chi2[i], self.Rval[i]))[0]]
+            self.C_lessless_org += [self.CR_less_org[-1] * self.CP_lessless_org[-1]]
+            self.CP_lessmore_org += [quad(self.dNdP_lessmore, self.Porb_lims[0], self.Pbrk[i], args=(self.Pbrk[i], self.beta1[i], self.Pcen[i], self.s[i], self.chi1[i], self.chi2[i], self.Rval[i]))[0]]
+            self.C_lessmore_org += [self.CR_more_org[-1] * self.CP_lessmore_org[-1]]
+            self.CP_moreless_org += [quad(self.dNdP_moreless, self.Pbrk[i], self.Porb_lims[1], args=(self.Pbrk[i], self.beta2[i], self.Pcen[i], self.s[i], self.chi1[i], self.chi2[i], self.Rval[i]))[0]]
+            self.C_moreless_org += [self.CR_less_org[-1] * self.CP_moreless_org[-1]]
+            self.CP_moremore_org += [quad(self.dNdP_moremore, self.Pbrk[i], self.Porb_lims[1], args=(self.Pbrk[i], self.beta2[i], self.Pcen[i], self.s[i], self.chi1[i], self.chi2[i], self.Rval[i]))[0]]
+            self.C_moremore_org += [self.CR_more_org[-1] * self.CP_moremore_org[-1]]
+        
+        # Extrapolation.
+        # self.Rp_lims = [1.0, 3.5] # Rearth
+        # self.Porb_lims = [2., 100.] # d
+        self.Rp_lims = [0.5, 3.5] # Rearth
+        self.Porb_lims = [2., 2000.] # d
+        self.CR_less = []
+        self.CR_more = []
+        self.CP_lessless = []
         self.C_lessless = []
-        self.C_lessmore_norm = []
+        self.CP_lessmore = []
         self.C_lessmore = []
-        self.C_moreless_norm = []
+        self.CP_moreless = []
         self.C_moreless = []
-        self.C_moremore_norm = []
+        self.CP_moremore = []
         self.C_moremore = []
         for i in range(len(self.F0)):
-            self.C_lessless_norm += [quad(self.dNdP_lessless, self.Porb_lims[0], self.Pbrk[i], args=(self.Pbrk[i], self.beta1[i], self.Pcen[i], self.s[i], self.chi1[i], self.chi2[i], self.Rval[i]))[0]]
-            self.C_lessless += [(self.Rval[i] - self.Rp_lims[0]) * self.C_lessless_norm[-1]]
-            self.C_lessmore_norm += [quad(self.dNdP_lessmore, self.Porb_lims[0], self.Pbrk[i], args=(self.Pbrk[i], self.beta1[i], self.Pcen[i], self.s[i], self.chi1[i], self.chi2[i], self.Rval[i]))[0]]
-            self.C_lessmore += [(self.Rp_lims[1] - self.Rval[i]) * self.C_lessmore_norm[-1]]
-            self.C_moreless_norm += [quad(self.dNdP_moreless, self.Pbrk[i], self.Porb_lims[1], args=(self.Pbrk[i], self.beta2[i], self.Pcen[i], self.s[i], self.chi1[i], self.chi2[i], self.Rval[i]))[0]]
-            self.C_moreless += [(self.Rval[i] - self.Rp_lims[0]) * self.C_moreless_norm[-1]]
-            self.C_moremore_norm += [quad(self.dNdP_moremore, self.Pbrk[i], self.Porb_lims[1], args=(self.Pbrk[i], self.beta2[i], self.Pcen[i], self.s[i], self.chi1[i], self.chi2[i], self.Rval[i]))[0]]
-            self.C_moremore += [(self.Rp_lims[1] - self.Rval[i]) * self.C_moremore_norm[-1]]
+            self.CR_less += [quad(self.dNdR, self.Rp_lims[0], self.Rval[i])[0]]
+            self.CR_more += [quad(self.dNdR, self.Rval[i], self.Rp_lims[1])[0]]
+            self.CP_lessless += [quad(self.dNdP_lessless, self.Porb_lims[0], self.Pbrk[i], args=(self.Pbrk[i], self.beta1[i], self.Pcen[i], self.s[i], self.chi1[i], self.chi2[i], self.Rval[i]))[0]]
+            self.C_lessless += [self.CR_less[-1] * self.CP_lessless[-1]]
+            self.CP_lessmore += [quad(self.dNdP_lessmore, self.Porb_lims[0], self.Pbrk[i], args=(self.Pbrk[i], self.beta1[i], self.Pcen[i], self.s[i], self.chi1[i], self.chi2[i], self.Rval[i]))[0]]
+            self.C_lessmore += [self.CR_more[-1] * self.CP_lessmore[-1]]
+            self.CP_moreless += [quad(self.dNdP_moreless, self.Pbrk[i], self.Porb_lims[1], args=(self.Pbrk[i], self.beta2[i], self.Pcen[i], self.s[i], self.chi1[i], self.chi2[i], self.Rval[i]))[0]]
+            self.C_moreless += [self.CR_less[-1] * self.CP_moreless[-1]]
+            self.CP_moremore += [quad(self.dNdP_moremore, self.Pbrk[i], self.Porb_lims[1], args=(self.Pbrk[i], self.beta2[i], self.Pcen[i], self.s[i], self.chi1[i], self.chi2[i], self.Rval[i]))[0]]
+            self.C_moremore += [self.CR_more[-1] * self.CP_moremore[-1]]
+            self.F0[i] *= (self.C_lessless[-1] + self.C_lessmore[-1] + self.C_moreless[-1] + self.C_moremore[-1]) / (self.C_lessless_org[i] + self.C_lessmore_org[i] + self.C_moreless_org[i] + self.C_moremore_org[i])
         
         pass
+    
+    def dNdR(self, Rp):
+        
+        return 1. / Rp
     
     def t(self, Porb, Pcen, s):
         
@@ -226,23 +312,27 @@ class PlanetDistribution():
     
     def dNdP_lessless(self, Porb, Pbrk, beta1, Pcen, s, chi1, chi2, Rval):
         
-        return (Porb / Pbrk)**beta1 * self.G_less(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) / ((Rval - self.Rp_lims[0]) + self.G_less(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) - self.G_less(Porb, Pcen, s, chi1, chi2) * (Rval - self.Rp_lims[0]))
+        a, b, c = np.log(1.0), np.log(Rval), np.log(3.5)
+        return (Porb / Pbrk)**beta1 * self.G_less(Porb, Pcen, s, chi1, chi2) * (c - b) / ((b - a) + self.G_less(Porb, Pcen, s, chi1, chi2) * (c - b) - self.G_less(Porb, Pcen, s, chi1, chi2) * (b - a))
     
     def dNdP_lessmore(self, Porb, Pbrk, beta1, Pcen, s, chi1, chi2, Rval):
         
-        return (Porb / Pbrk)**beta1 * self.G_more(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) / ((Rval - self.Rp_lims[0]) + self.G_more(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) - self.G_more(Porb, Pcen, s, chi1, chi2) * (Rval - self.Rp_lims[0]))
+        a, b, c = np.log(1.0), np.log(Rval), np.log(3.5)
+        return (Porb / Pbrk)**beta1 * self.G_more(Porb, Pcen, s, chi1, chi2) * (c - b) / ((b - a) + self.G_more(Porb, Pcen, s, chi1, chi2) * (c - b) - self.G_more(Porb, Pcen, s, chi1, chi2) * (b - a))
     
     def dNdP_moreless(self, Porb, Pbrk, beta2, Pcen, s, chi1, chi2, Rval):
         
-        return (Porb / Pbrk)**beta2 * self.G_less(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) / ((Rval - self.Rp_lims[0]) + self.G_less(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) - self.G_less(Porb, Pcen, s, chi1, chi2) * (Rval - self.Rp_lims[0]))
+        a, b, c = np.log(1.0), np.log(Rval), np.log(3.5)
+        return (Porb / Pbrk)**beta2 * self.G_less(Porb, Pcen, s, chi1, chi2) * (c - b) / ((b - a) + self.G_less(Porb, Pcen, s, chi1, chi2) * (c - b) - self.G_less(Porb, Pcen, s, chi1, chi2) * (b - a))
     
     def dNdP_moremore(self, Porb, Pbrk, beta2, Pcen, s, chi1, chi2, Rval):
         
-        return (Porb / Pbrk)**beta2 * self.G_more(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) / ((Rval - self.Rp_lims[0]) + self.G_more(Porb, Pcen, s, chi1, chi2) * (self.Rp_lims[1] - Rval) - self.G_more(Porb, Pcen, s, chi1, chi2) * (Rval - self.Rp_lims[0]))
+        a, b, c = np.log(1.0), np.log(Rval), np.log(3.5)
+        return (Porb / Pbrk)**beta2 * self.G_more(Porb, Pcen, s, chi1, chi2) * (c - b) / ((b - a) + self.G_more(Porb, Pcen, s, chi1, chi2) * (c - b) - self.G_more(Porb, Pcen, s, chi1, chi2) * (b - a))
     
     def draw(self,
-             Rp_range=[1., 3.5], # Rearth
-             Porb_range=[2., 100.], # d
+             Rp_range=[0.5, 3.5], # Rearth
+             Porb_range=[2., 2000.], # d
              Nplanets=None,
              Scale=1.,
              Star=None):
@@ -295,24 +385,29 @@ class PlanetDistribution():
             for i in range(Nplanets):
                 
                 # Randomly select whether Porb < Pbrk or Porb > Pbrk and Rp < Rval or Rp > Rval.
+                # p = np.array([self.CP_lessless[ww], self.CP_lessmore[ww], self.CP_moreless[ww], self.CP_moremore[ww]])
                 p = np.array([self.C_lessless[ww], self.C_lessmore[ww], self.C_moreless[ww], self.C_moremore[ww]])
                 temp = np.random.choice(4, p=p/np.sum(p))
                 if (temp == 0):
-                    rv = rv_lessless(a=self.Porb_lims[0], b=self.Pbrk[ww])
-                    tempRp = self.Rp_lims[0] + np.random.rand() * (self.Rval[ww] - self.Rp_lims[0]) # Rearth
-                    tempPorb = rv.rvs(Pbrk=self.Pbrk[ww], beta1=self.beta1[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.C_lessless_norm[ww]) # d
+                    rvR = rv_Rp(a=self.Rp_lims[0], b=self.Rval[ww])
+                    tempRp = rvR.rvs(norm=self.CR_less[ww])
+                    rvP = rv_lessless(a=self.Porb_lims[0], b=self.Pbrk[ww])
+                    tempPorb = rvP.rvs(Pbrk=self.Pbrk[ww], beta1=self.beta1[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.CP_lessless[ww]) # d
                 elif (temp == 1):
-                    rv = rv_lessmore(a=self.Porb_lims[0], b=self.Pbrk[ww])
-                    tempRp = self.Rval[ww] + np.random.rand() * (self.Rp_lims[1] - self.Rval[ww]) # Rearth
-                    tempPorb = rv.rvs(Pbrk=self.Pbrk[ww], beta1=self.beta1[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.C_lessmore_norm[ww]) # d
+                    rvR = rv_Rp(a=self.Rval[ww], b=self.Rp_lims[1])
+                    tempRp = rvR.rvs(norm=self.CR_more[ww])
+                    rvP = rv_lessmore(a=self.Porb_lims[0], b=self.Pbrk[ww])
+                    tempPorb = rvP.rvs(Pbrk=self.Pbrk[ww], beta1=self.beta1[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.CP_lessmore[ww]) # d
                 elif (temp == 2):
-                    rv = rv_moreless(a=self.Pbrk[ww], b=self.Porb_lims[1])
-                    tempRp = self.Rp_lims[0] + np.random.rand() * (self.Rval[ww] - self.Rp_lims[0]) # Rearth
-                    tempPorb = rv.rvs(Pbrk=self.Pbrk[ww], beta2=self.beta2[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.C_moreless_norm[ww]) # d
+                    rvR = rv_Rp(a=self.Rp_lims[0], b=self.Rval[ww])
+                    tempRp = rvR.rvs(norm=self.CR_less[ww])
+                    rvP = rv_moreless(a=self.Pbrk[ww], b=self.Porb_lims[1])
+                    tempPorb = rvP.rvs(Pbrk=self.Pbrk[ww], beta2=self.beta2[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.CP_moreless[ww]) # d
                 elif (temp == 3):
-                    rv = rv_moremore(a=self.Pbrk[ww], b=self.Porb_lims[1])
-                    tempRp = self.Rval[ww] + np.random.rand() * (self.Rp_lims[1] - self.Rval[ww]) # Rearth
-                    tempPorb = rv.rvs(Pbrk=self.Pbrk[ww], beta2=self.beta2[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.C_moremore_norm[ww]) # d
+                    rvR = rv_Rp(a=self.Rval[ww], b=self.Rp_lims[1])
+                    tempRp = rvR.rvs(norm=self.CR_more[ww])
+                    rvP = rv_moremore(a=self.Pbrk[ww], b=self.Porb_lims[1])
+                    tempPorb = rvP.rvs(Pbrk=self.Pbrk[ww], beta2=self.beta2[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.CP_moremore[ww]) # d
                 if (Rp_range[0] <= tempRp <= Rp_range[1] and Porb_range[0] <= tempPorb <= Porb_range[1]):
                     Rp += [tempRp] # Rearth
                     Porb += [tempPorb] # d
@@ -323,24 +418,29 @@ class PlanetDistribution():
             while (len(Rp) < Nplanets):
                 
                 # Randomly select whether Porb < Pbrk or Porb > Pbrk and Rp < Rval or Rp > Rval.
+                # p = np.array([self.CP_lessless[ww], self.CP_lessmore[ww], self.CP_moreless[ww], self.CP_moremore[ww]])
                 p = np.array([self.C_lessless[ww], self.C_lessmore[ww], self.C_moreless[ww], self.C_moremore[ww]])
                 temp = np.random.choice(4, p=p/np.sum(p))
                 if (temp == 0):
-                    rv = rv_lessless(a=self.Porb_lims[0], b=self.Pbrk[ww])
-                    tempRp = self.Rp_lims[0] + np.random.rand() * (self.Rval[ww] - self.Rp_lims[0]) # Rearth
-                    tempPorb = rv.rvs(Pbrk=self.Pbrk[ww], beta1=self.beta1[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.C_lessless_norm[ww]) # d
+                    rvR = rv_Rp(a=self.Rp_lims[0], b=self.Rval[ww])
+                    tempRp = rvR.rvs(norm=self.CR_less[ww])
+                    rvP = rv_lessless(a=self.Porb_lims[0], b=self.Pbrk[ww])
+                    tempPorb = rvP.rvs(Pbrk=self.Pbrk[ww], beta1=self.beta1[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.CP_lessless[ww]) # d
                 elif (temp == 1):
-                    rv = rv_lessmore(a=self.Porb_lims[0], b=self.Pbrk[ww])
-                    tempRp = self.Rval[ww] + np.random.rand() * (self.Rp_lims[1] - self.Rval[ww]) # Rearth
-                    tempPorb = rv.rvs(Pbrk=self.Pbrk[ww], beta1=self.beta1[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.C_lessmore_norm[ww]) # d
+                    rvR = rv_Rp(a=self.Rval[ww], b=self.Rp_lims[1])
+                    tempRp = rvR.rvs(norm=self.CR_more[ww])
+                    rvP = rv_lessmore(a=self.Porb_lims[0], b=self.Pbrk[ww])
+                    tempPorb = rvP.rvs(Pbrk=self.Pbrk[ww], beta1=self.beta1[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.CP_lessmore[ww]) # d
                 elif (temp == 2):
-                    rv = rv_moreless(a=self.Pbrk[ww], b=self.Porb_lims[1])
-                    tempRp = self.Rp_lims[0] + np.random.rand() * (self.Rval[ww] - self.Rp_lims[0]) # Rearth
-                    tempPorb = rv.rvs(Pbrk=self.Pbrk[ww], beta2=self.beta2[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.C_moreless_norm[ww]) # d
+                    rvR = rv_Rp(a=self.Rp_lims[0], b=self.Rval[ww])
+                    tempRp = rvR.rvs(norm=self.CR_less[ww])
+                    rvP = rv_moreless(a=self.Pbrk[ww], b=self.Porb_lims[1])
+                    tempPorb = rvP.rvs(Pbrk=self.Pbrk[ww], beta2=self.beta2[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.CP_moreless[ww]) # d
                 elif (temp == 3):
-                    rv = rv_moremore(a=self.Pbrk[ww], b=self.Porb_lims[1])
-                    tempRp = self.Rval[ww] + np.random.rand() * (self.Rp_lims[1] - self.Rval[ww]) # Rearth
-                    tempPorb = rv.rvs(Pbrk=self.Pbrk[ww], beta2=self.beta2[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.C_moremore_norm[ww]) # d
+                    rvR = rv_Rp(a=self.Rval[ww], b=self.Rp_lims[1])
+                    tempRp = rvR.rvs(norm=self.CR_more[ww])
+                    rvP = rv_moremore(a=self.Pbrk[ww], b=self.Porb_lims[1])
+                    tempPorb = rvP.rvs(Pbrk=self.Pbrk[ww], beta2=self.beta2[ww], Pcen=self.Pcen[ww], s=self.s[ww], chi1=self.chi1[ww], chi2=self.chi2[ww], Rval=self.Rval[ww], norm=self.CP_moremore[ww]) # d
                 if (Rp_range[0] <= tempRp <= Rp_range[1] and Porb_range[0] <= tempPorb <= Porb_range[1]):
                     Rp += [tempRp] # Rearth
                     Porb += [tempPorb] # d
@@ -349,8 +449,8 @@ class PlanetDistribution():
     
     def SummaryPlot(self,
                     Ntest=100000,
-                    Rp_range=[1., 3.5], # Rearth
-                    Porb_range=[2., 100.], # d
+                    Rp_range=[0.5, 3.5], # Rearth
+                    Porb_range=[2., 2000.], # d
                     FigDir=None,
                     block=True):
         """
