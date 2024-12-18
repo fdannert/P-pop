@@ -19,7 +19,7 @@
 
 # Don't print annoying warnings. Comment out if you want to see them.
 import warnings
-#warnings.filterwarnings('ignore')
+warnings.filterwarnings('ignore')
 
 
 # =============================================================================
@@ -37,9 +37,10 @@ from PlanetDistributions import Fressin2013,\
                                 Weiss2018KDE,\
                                 HabitableNominal,\
                                 HabitablePessimistic,\
-                                Fernandes2019Symm#,\
-                                #Bryson2021Model1Hab2Low,\
-                                #Bryson2021Model1Hab2High
+                                Fernandes2019Symm,\
+                                Bryson2021Model1Hab2Low,\
+                                Bryson2021Model1Hab2High,\
+                                Bergsten2022
 from ScalingModels import BinarySuppression
 from MassModels import Chen2017
 from EccentricityModels import Circular
@@ -87,6 +88,7 @@ StypeToModel = {'F': SAG13, 'G': SAG13, 'K': SAG13, 'M': Dressing2015} # used in
 # StypeToModel = {'A': Fernandes2019Symm, 'F': Fernandes2019Symm, 'G': Fernandes2019Symm, 'K': Fernandes2019Symm, 'M': Fernandes2019Symm}
 # StypeToModel = {'A': Bryson2021Model1Hab2Low, 'F': Bryson2021Model1Hab2Low, 'G': Bryson2021Model1Hab2Low, 'K': Bryson2021Model1Hab2Low, 'M': Bryson2021Model1Hab2Low}
 # StypeToModel = {'A': Bryson2021Model1Hab2High, 'F': Bryson2021Model1Hab2High, 'G': Bryson2021Model1Hab2High, 'K': Bryson2021Model1Hab2High, 'M': Bryson2021Model1Hab2High}
+# StypeToModel = {'A': Bergsten2022, 'F': Bergsten2022, 'G': Bergsten2022, 'K': Bergsten2022, 'M': Bergsten2022}
 Scenario = 'baseline'
 # Scenario = 'pessimistic' # for 1-sigma lower error bars on planet distribution
 # Scenario = 'optimistic' # for 1-sigma upper error bars on planet distribution
@@ -111,8 +113,8 @@ ExozodiModel = Ertel2020
 # Select whether you want to display summary plots after loading the catalogs,
 # distributions and models selected above, how many test draws should be
 # done for generating these plots, and where you want to save them.
-# SummaryPlots = True
-SummaryPlots = False
+SummaryPlots = True
+# SummaryPlots = False
 Ntest = 100000 # int
 # Ntest = 10000 # int
 # FigDir = None # if you don't want to save the summary plots
@@ -122,8 +124,8 @@ block = False
 
 # Select a name for the output planet population table and how many universes
 # should be simulated.
-Name = 'white_paper_5uni_names' # str
-Nuniverses = 5 # int
+Name = 'TestPlanetPopulation' # str
+Nuniverses = 1000 # int
 
 
 # =============================================================================

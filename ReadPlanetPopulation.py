@@ -245,6 +245,14 @@ class PlanetPopulation():
             T = self.Ts-5780. # K
             self.HZin = S0in+Ain*T+Bin*T**2+Cin*T**3 # au
             self.HZout = S0out+Aout*T+Bout*T**2+Cout*T**3 # au
+            # S0in, S0out = 1.0140, 0.3438
+            # Ain, Aout = 8.1774E-5, 5.8942E-5
+            # Bin, Bout = 1.7063E-9, 1.6558E-9
+            # Cin, Cout = -4.3241E-12, -3.0045E-12
+            # Din, Dout = -6.6462e-16, -5.2982e-16
+            # T = self.Ts-5780. # K
+            # self.HZin = S0in+Ain*T+Bin*T**2+Cin*T**3+Din*T**4 # au
+            # self.HZout = S0out+Aout*T+Bout*T**2+Cout*T**3+Dout*T**4 # au
         elif (Model == 'POST-MS'):
             S0in, S0out = 1.1066, 0.3240
             Ain, Aout = 1.2181E-4, 5.3221E-5
